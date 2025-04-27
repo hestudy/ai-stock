@@ -1,6 +1,10 @@
-import { memo } from 'react';
+import { createFileRoute } from '@tanstack/react-router';
 
-const Login = memo(() => {
+export const Route = createFileRoute('/login')({
+  component: RouteComponent,
+});
+
+function RouteComponent() {
   return (
     <div className="h-full flex justify-center items-center">
       <form>
@@ -34,6 +38,4 @@ const Login = memo(() => {
       </form>
     </div>
   );
-});
-
-export default Login;
+}
