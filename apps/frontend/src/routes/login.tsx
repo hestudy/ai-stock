@@ -6,17 +6,44 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useAppForm } from "@/hooks/form";
-import { createFileRoute } from "@tanstack/react-router";
+import { pb } from "@/lib/pb";
+import { useMutation } from "@tanstack/react-query";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const navigate = useNavigate();
   const form = useAppForm({
     defaultValues: {
       email: "",
       password: "",
+    },
+    onSubmit: async () => {
+      await mutation.mutateAsync();
+    },
+  });
+
+  const mutation = useMutation({
+    mutationFn: async () => {
+      const res = await pb
+        .collection("users")
+        .authWithPassword(form.state.values.email, form.state.values.password)
+        .catch(() => {
+          toast.error("登录失败");
+          return null;
+        });
+      if (res?.token) {
+        toast.success("登录成功");
+        navigate({
+          to: "/",
+          replace: true,
+        });
+      }
+      return res;
     },
   });
 
@@ -83,9 +110,9 @@ function RouteComponent() {
                 </div>
                 <div className="mt-4 text-center text-sm">
                   没有账户？{" "}
-                  <a href="#" className="underline underline-offset-4">
+                  <Link to="/register" className="underline underline-offset-4">
                     注册
-                  </a>
+                  </Link>
                 </div>
               </form>
             </CardContent>
