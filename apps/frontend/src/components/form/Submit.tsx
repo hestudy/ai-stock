@@ -1,9 +1,9 @@
 import { useFormContext } from "@/hooks/form/context";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
-import { memo, type ComponentProps } from "react";
+import { type ComponentProps } from "react";
 import { Button } from "../ui/button";
-const Submit = memo((props: ComponentProps<typeof Button>) => {
+const Submit = (props: ComponentProps<typeof Button>) => {
   const form = useFormContext();
   return (
     <Button
@@ -16,6 +16,6 @@ const Submit = memo((props: ComponentProps<typeof Button>) => {
       {props.children}
     </Button>
   );
-});
+};
 
 export default Submit;

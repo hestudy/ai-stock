@@ -1,3 +1,11 @@
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useAppForm } from "@/hooks/form";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/login")({
@@ -5,5 +13,85 @@ export const Route = createFileRoute("/login")({
 });
 
 function RouteComponent() {
-  return <div>Hello "/login"!</div>;
+  const form = useAppForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  return (
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+      <div className="w-full max-w-sm">
+        <div className={"flex flex-col gap-6"}>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl">登录</CardTitle>
+              <CardDescription>输入你的邮箱和密码登录你的账户</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  form.handleSubmit();
+                }}
+              >
+                <div className="flex flex-col gap-6">
+                  <div className="grid gap-2">
+                    <form.AppField
+                      name="email"
+                      validators={{
+                        onChange: ({ value }) => {
+                          if (
+                            !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+                              value
+                            )
+                          ) {
+                            return "邮箱格式不正确";
+                          }
+                        },
+                      }}
+                      children={(field) => {
+                        return (
+                          <field.Input
+                            label="邮箱"
+                            type="email"
+                            placeholder="m@example.com"
+                          />
+                        );
+                      }}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <form.AppField
+                      name="password"
+                      children={(field) => {
+                        return (
+                          <field.Input
+                            required
+                            label="密码"
+                            type="password"
+                            placeholder="********"
+                          />
+                        );
+                      }}
+                    />
+                  </div>
+                  <form.AppForm>
+                    <form.Submit className="w-full">登录</form.Submit>
+                  </form.AppForm>
+                </div>
+                <div className="mt-4 text-center text-sm">
+                  没有账户？{" "}
+                  <a href="#" className="underline underline-offset-4">
+                    注册
+                  </a>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
 }
