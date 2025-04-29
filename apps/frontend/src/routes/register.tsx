@@ -69,6 +69,21 @@ function RouteComponent() {
                 <div className="flex flex-col gap-6">
                   <div className="grid gap-2">
                     <form.AppField
+                      name="name"
+                      children={(field) => {
+                        return (
+                          <field.Input
+                            required
+                            label="昵称"
+                            type="text"
+                            placeholder="昵称"
+                          />
+                        );
+                      }}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <form.AppField
                       name="email"
                       validators={{
                         onChange: ({ value }) => {
@@ -108,13 +123,13 @@ function RouteComponent() {
                     />
                   </div>
                   <form.AppForm>
-                    <form.Submit className="w-full">登录</form.Submit>
+                    <form.Submit className="w-full">注册</form.Submit>
                   </form.AppForm>
                 </div>
                 <div className="mt-4 text-center text-sm">
-                  没有账户？{" "}
-                  <Link to="/register" className="underline underline-offset-4">
-                    注册
+                  已有账户？{" "}
+                  <Link to="/login" className="underline underline-offset-4">
+                    登录
                   </Link>
                 </div>
               </form>
