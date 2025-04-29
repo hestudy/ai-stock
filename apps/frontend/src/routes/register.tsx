@@ -122,6 +122,29 @@ function RouteComponent() {
                       }}
                     />
                   </div>
+                  <div className="grid gap-2">
+                    <form.AppField
+                      name="passwordConfirm"
+                      validators={{
+                        onChangeListenTo: ["password"],
+                        onChange: ({ value }) => {
+                          if (value !== form.state.values.password) {
+                            return "密码不一致";
+                          }
+                        },
+                      }}
+                      children={(field) => {
+                        return (
+                          <field.Input
+                            required
+                            label="确认密码"
+                            type="password"
+                            placeholder="********"
+                          />
+                        );
+                      }}
+                    />
+                  </div>
                   <form.AppForm>
                     <form.Submit className="w-full">注册</form.Submit>
                   </form.AppForm>
