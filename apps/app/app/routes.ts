@@ -11,5 +11,5 @@ export default [
   layout("layouts/authLayout.tsx", [
     layout("layouts/initDataLayout.tsx", [index("routes/dashboard.tsx")]),
   ]),
-  route("/api/auth", "routes/api/auth.ts"),
+  route("/api/auth/*", "routes/api/auth.ts"),
 ] satisfies RouteConfig;
