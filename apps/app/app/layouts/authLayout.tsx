@@ -1,6 +1,6 @@
 import { Outlet, redirect, type LoaderFunctionArgs } from "react-router";
 import { auth } from "~/auth";
-import Spin from "~/components/spin";
+import Loading from "~/components/loading";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const session = await auth.api.getSession({
@@ -15,7 +15,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export function HydrateFallback() {
   return (
     <div className="w-full h-full flex justify-center items-center bg-background">
-      <Spin />
+      <Loading />
     </div>
   );
 }

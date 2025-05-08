@@ -75,6 +75,9 @@ export const stocks = sqliteTable("stocks", {
   is_hs: text("is_hs"),
   act_name: text("act_name"),
   act_ent_type: text("act_ent_type"),
+  createUser: text("create_user")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   createdAt: integer("created_at", { mode: "timestamp" }).default(
     sql`CURRENT_TIMESTAMP`
   ),
@@ -86,6 +89,9 @@ export const stocks = sqliteTable("stocks", {
 export const initDataRecord = sqliteTable("initDataRecord", {
   id: text("id").$defaultFn(() => createId()),
   name: text("name").notNull(),
+  createUser: text("create_user")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   createdAt: integer("created_at", { mode: "timestamp" }).default(
     sql`CURRENT_TIMESTAMP`
   ),
