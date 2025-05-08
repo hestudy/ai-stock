@@ -37,3 +37,4 @@ yarn-error.log*
 .DS_Store
 *.pem
 apps/endpoint/pb_data/*
+apps/app/local.db
