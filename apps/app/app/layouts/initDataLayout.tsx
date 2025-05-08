@@ -1,6 +1,7 @@
+import { eq } from "drizzle-orm";
+import { useState } from "react";
 import { Outlet } from "react-router";
-import { pb } from "~/lib/pb";
-import type { Route } from "./+types/initDataLayout";
+import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,16 +9,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
-import { useState } from "react";
+import db from "~/db";
+import { initDataRecord } from "~/db/schema";
+import type { Route } from "./+types/initDataLayout";
 
-export async function clientLoader() {
-  return await pb.collection("initDataRecord").getList(1, 1, {
-    filter: "name='stocks'",
-  });
+export async function loader() {
+  return await db.$count(initDataRecord, eq(initDataRecord.name, "stocks"));
 }
 
+export async function action() {}
+
 export default function initDataLayout({ loaderData }: Route.ComponentProps) {
-  const [open, setOpen] = useState(loaderData.items.length === 0);
+  const [open] = useState(loaderData === 0);
 
   return (
     <>
@@ -29,6 +32,7 @@ export default function initDataLayout({ loaderData }: Route.ComponentProps) {
               This will initialize the stocks data for the application.
             </DialogDescription>
           </DialogHeader>
+          <Button className="block">click me start init data</Button>
         </DialogContent>
       </Dialog>
       <Outlet />

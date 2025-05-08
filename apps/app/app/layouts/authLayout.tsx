@@ -1,14 +1,15 @@
-import { Outlet, redirect } from "react-router";
+import { Outlet, redirect, type LoaderFunctionArgs } from "react-router";
+import { auth } from "~/auth";
 import Spin from "~/components/spin";
-import { pb } from "~/lib/pb";
 
-export async function clientLoader() {
-  const isAuth = pb.authStore.isValid;
-  if (!isAuth) {
+export async function loader({ request }: LoaderFunctionArgs) {
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
+  if (!session) {
     return redirect("/login");
   }
-  await pb.collection("users").authRefresh();
-  return pb.authStore.record;
+  return session;
 }
 
 export function HydrateFallback() {

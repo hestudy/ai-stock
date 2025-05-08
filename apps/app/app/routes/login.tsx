@@ -1,24 +1,23 @@
 import { GalleryVerticalEnd } from "lucide-react";
 
-import { LoginForm } from "~/components/login-form";
-import { pb } from "~/lib/pb";
-import type { Route } from "./+types/login";
 import { redirect } from "react-router";
-import { toast } from "sonner";
+import { auth } from "~/auth";
+import { LoginForm } from "~/components/login-form";
+import type { Route } from "./+types/login";
 
-export async function clientAction({ request }: Route.ActionArgs) {
+export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
-  const res = await pb
-    .collection("users")
-    .authWithPassword(email as string, password as string)
-    .catch((e) => {
-      toast.error(e.message);
-      return null;
-    });
-  if (res?.record.id) {
-    return redirect("/");
+  const res = await auth.api.signInEmail({
+    body: {
+      email: email as string,
+      password: password as string,
+    },
+    asResponse: true,
+  });
+  if (res.ok) {
+    return redirect("/", res);
   }
 }
 

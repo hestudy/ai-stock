@@ -41,7 +41,12 @@ export function RegisterForm({
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
           </div>
-          <Input name="password" type="password" required />
+          <Input
+            name="password"
+            type="password"
+            required
+            placeholder="********"
+          />
         </div>
         <Button type="submit" className="w-full" disabled={loading}>
           {loading && (

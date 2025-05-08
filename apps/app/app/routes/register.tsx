@@ -1,29 +1,21 @@
 import { GalleryVerticalEnd } from "lucide-react";
 import { redirect } from "react-router";
-import { toast } from "sonner";
+import { auth } from "~/auth";
 import { RegisterForm } from "~/components/register-form";
-import { pb } from "~/lib/pb";
 
-export async function clientAction({ request }: { request: Request }) {
+export async function action({ request }: { request: Request }) {
   const formData = await request.formData();
   const name = formData.get("name");
   const email = formData.get("email");
   const password = formData.get("password");
-  const res = await pb
-    .collection("users")
-    .create({
-      name,
-      email,
-      emailVisibility: true,
-      password,
-      passwordConfirm: password,
-    })
-    .catch((e) => {
-      toast.error(e.message);
-      return null;
-    });
-  if (res?.id) {
-    toast.success("Account created successfully");
+  const res = await auth.api.signUpEmail({
+    body: {
+      email: email as string,
+      password: password as string,
+      name: name as string,
+    },
+  });
+  if (res?.user) {
     return redirect("/login");
   }
 }

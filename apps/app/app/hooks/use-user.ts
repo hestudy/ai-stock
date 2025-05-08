@@ -1,6 +1,7 @@
-import { useMemo } from "react";
-import { pb } from "~/lib/pb";
+import { authClient } from "~/lib/authClient";
 
 export const useUser = () => {
-  return useMemo(() => pb.authStore.record, []);
+  const session = authClient.useSession();
+
+  return session.data?.user;
 };

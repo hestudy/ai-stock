@@ -43,7 +43,12 @@ export function LoginForm({
               Forgot your password?
             </a>
           </div>
-          <Input name="password" type="password" required />
+          <Input
+            name="password"
+            type="password"
+            required
+            placeholder="********"
+          />
         </div>
         <Button type="submit" className="w-full" disabled={loading}>
           {loading && (
