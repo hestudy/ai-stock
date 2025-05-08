@@ -13,7 +13,7 @@ export async function clientLoader() {
 
 export function HydrateFallback() {
   return (
-    <div className="w-full h-full flex justify-center items-center">
+    <div className="w-full h-full flex justify-center items-center bg-background">
       <Spin />
     </div>
   );
