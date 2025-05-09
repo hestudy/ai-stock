@@ -1,45 +1,61 @@
 import { eq } from "drizzle-orm";
-import { Outlet, useFetcher } from "react-router";
-import Spin from "~/components/spin";
-import { Button } from "~/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "~/components/ui/dialog";
+import lodash from "lodash";
+import { Outlet } from "react-router";
+import Loading from "~/components/loading";
 import db from "~/db";
-import { initDataRecord } from "~/db/schema";
+import { initDataRecord, stocks } from "~/db/schema";
+import { getTushareStockList } from "~/lib/tushare/getTushareStockList";
 import type { Route } from "./+types/initDataLayout";
 
 export async function loader() {
-  return await db.$count(initDataRecord, eq(initDataRecord.name, "stocks"));
+  const count = await db.$count(
+    initDataRecord,
+    eq(initDataRecord.name, "stocks")
+  );
+  if (count === 0) {
+    const res = await getTushareStockList();
+
+    const data: (typeof stocks.$inferInsert)[] = [];
+
+    res.data.items.forEach((item) => {
+      const itemData: typeof stocks.$inferInsert = {
+        name: "",
+        symbol: "",
+        ts_code: "",
+      };
+      res.data.fields.forEach((field, index) => {
+        // @ts-ignore
+        itemData[field] = item[index];
+      });
+      data.push(itemData);
+    });
+
+    if (!lodash.isEmpty(data)) {
+      const result = await db.select().from(stocks);
+      const difference = lodash.differenceBy(data, result, "symbol");
+      if (!lodash.isEmpty(difference)) {
+        const chunkArray = lodash.chunk(difference, 100);
+        for (const c of chunkArray) {
+          await db.insert(stocks).values(c);
+        }
+      }
+    }
+
+    await db.insert(initDataRecord).values({
+      name: "stocks",
+    });
+  }
 }
 
-export default function initDataLayout({ loaderData }: Route.ComponentProps) {
-  const fetcher = useFetcher();
-  const loading = fetcher.state !== "idle";
-
+export function HydrateFallback() {
   return (
-    <>
-      <Dialog open={loaderData === 0}>
-        <DialogContent hideClose>
-          <DialogHeader>
-            <DialogTitle>Init Stocks Data</DialogTitle>
-            <DialogDescription>
-              This will initialize the stocks data for the application.
-            </DialogDescription>
-          </DialogHeader>
-          <fetcher.Form method="post" action="/api/initData">
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading && <Spin />}
-              click me start init data
-            </Button>
-          </fetcher.Form>
-        </DialogContent>
-      </Dialog>
-      <Outlet />
-    </>
+    <div className="flex flex-col h-full w-full items-center justify-center">
+      <Loading />
+      <p className="text-sm text-muted-foreground">initializing data...</p>
+    </div>
   );
+}
+
+export default function initDataLayout({}: Route.ComponentProps) {
+  return <Outlet />;
 }

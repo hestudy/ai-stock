@@ -1,6 +1,6 @@
 import { GalleryVerticalEnd } from "lucide-react";
 
-import { redirect } from "react-router";
+import { data, redirect } from "react-router";
 import { auth } from "~/auth";
 import { LoginForm } from "~/components/login-form";
 import type { Route } from "./+types/login";
@@ -14,14 +14,20 @@ export async function action({ request }: Route.ActionArgs) {
       email: email as string,
       password: password as string,
     },
-    asResponse: true,
   });
-  if (res.ok) {
-    return redirect("/", res);
+  if (res.user) {
+    const headers = new Headers();
+    headers.set("Set-Cookie", res.token);
+    return redirect("/", {
+      headers,
+    });
   }
+  return res;
 }
 
-export default function LoginPage() {
+export default function LoginPage({ actionData }: Route.ComponentProps) {
+  console.log(actionData);
+
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">

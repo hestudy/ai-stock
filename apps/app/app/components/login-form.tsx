@@ -14,7 +14,7 @@ export function LoginForm({
 
   return (
     <fetcher.Form
-      method="post"
+      // method="post"
       className={cn("flex flex-col gap-6", className)}
     >
       <div className="flex flex-col items-center gap-2 text-center">
